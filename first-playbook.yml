@@ -1,0 +1,27 @@
+---
+- name: Basic setup on all nodes
+  hosts: all
+  become: true
+  tasks:
+    - name: Install useful packages
+      ansible.builtin.apt:
+        name:
+          - htop
+          - tree
+          - curl
+        state: present
+        update_cache: true
+
+    - name: Create a practice file
+      ansible.builtin.copy:
+        content: "Managed by Ansible on {{ inventory_hostname }}\n"
+        dest: /tmp/ansible-test.txt
+
+    - name: Show the file content
+      ansible.builtin.command: cat /tmp/ansible-test.txt
+      register: result
+      changed_when: false
+
+    - name: Print output
+      ansible.builtin.debug:
+        msg: "{{ result.stdout }}"
